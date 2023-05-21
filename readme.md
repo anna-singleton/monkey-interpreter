@@ -11,7 +11,7 @@ go.
     - [x] 1.1 Lexical Analysis
     - [x] 1.2 Defining our Tokens
     - [x] 1.3 The Lexer
-    - [ ] 1.4 Extending our Token Set Lexer
+    - [x] 1.4 Extending our Token Set Lexer
     - [ ] 1.5 Start of a REPL
 - [ ] 2. Parsing
     - [ ] 2.1 Parsers
