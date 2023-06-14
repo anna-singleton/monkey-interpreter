@@ -12,7 +12,7 @@ go.
     - [x] 1.2 Defining our Tokens
     - [x] 1.3 The Lexer
     - [x] 1.4 Extending our Token Set Lexer
-    - [ ] 1.5 Start of a REPL
+    - [x] 1.5 Start of a REPL
 - [ ] 2. Parsing
     - [ ] 2.1 Parsers
     - [ ] 2.2 Why not a parser generator?
