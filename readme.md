@@ -14,9 +14,9 @@ go.
     - [x] 1.4 Extending our Token Set Lexer
     - [x] 1.5 Start of a REPL
 - [ ] 2. Parsing
-    - [ ] 2.1 Parsers
-    - [ ] 2.2 Why not a parser generator?
-    - [ ] 2.3 Writing a parser for the monkey programming language
+    - [x] 2.1 Parsers
+    - [x] 2.2 Why not a parser generator?
+    - [x] 2.3 Writing a parser for the monkey programming language
     - [ ] 2.4 Parser's first steps: parsing let statements
     - [ ] 2.5 Parsing return statements
     - [ ] 2.6 Parsing expressions
