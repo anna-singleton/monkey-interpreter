@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 #[derive(Debug, PartialEq, Eq)]
 pub enum Token {
     ILLEGAL(String),
@@ -33,6 +35,12 @@ pub enum Token {
     BANG,
     TRUE,
     FALSE,
+}
+
+impl Display for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        return write!(f, "{:?}", self)
+    }
 }
 
 pub fn ident_lookup(ident: &str) -> Token {
