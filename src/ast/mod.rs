@@ -1,56 +1,42 @@
 use crate::token::Token;
 
-pub trait Node {
-    fn token_literal(&self) -> String;
+#[derive(Debug)]
+pub enum Node {
+    Statement(Statement),
+    Expression(Expression),
+    Program(Program),
 }
 
-pub trait Statement: Node {
-    fn statement_node(&self);
-}
-
-pub trait Expression: Node {
-    fn expression_node(&self);
-}
-
+#[derive(Debug)]
 pub struct Program {
-    pub statements: Vec<Box<dyn Statement>>,
+    pub statements: Vec<Statement>
 }
 
 impl Program {
-    pub fn statement_count(&self) -> usize {
-        return self.statements.len();
+    pub fn new() -> Self {
+        return Program { statements: Vec::new() };
     }
 }
 
-impl Node for Program {
-    fn token_literal(&self) -> String {
-        if self.statements.is_empty() {
-            return String::new();
-        }
-        else {
-            return self.statements[0].token_literal();
-        }
-    }
+#[derive(Debug)]
+pub enum Statement {
+    LetStatement(LetStatement),
 }
 
+#[derive(Debug)]
 pub struct LetStatement {
     pub tok: Token,
     pub name: Identifier,
-    pub expr: dyn Expression
+    expr: Expression,
 }
 
-impl Node for LetStatement {
-    fn token_literal(&self) -> String {
-        return self.tok.to_string();
-    }
-}
-
-impl Statement for LetStatement {
-    fn statement_node(&self) {}
-}
-
-
+#[derive(Debug)]
 pub struct Identifier {
     tok: Token,
     pub val: String,
+}
+
+#[derive(Debug)]
+pub enum Expression {
+
 }
