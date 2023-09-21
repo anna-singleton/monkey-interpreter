@@ -30,10 +30,32 @@ pub struct LetStatement {
     expr: Expression,
 }
 
+impl LetStatement {
+    pub fn new(i: Identifier, e: Expression) -> Self {
+        return Self{
+            tok: Token::LET,
+            name: i,
+            expr: e};
+    }
+}
+
 #[derive(Debug)]
 pub struct Identifier {
     tok: Token,
     pub val: String,
+}
+
+impl Identifier {
+    pub fn new(tok: Token) -> Self {
+        let val = match tok {
+            Token::IDENT(s) => s.clone(),
+            _ => panic!("a token that is not IDENT was passed to create an identifier"),
+        };
+        return Self {
+            tok,
+            val,
+        }
+    }
 }
 
 #[derive(Debug)]

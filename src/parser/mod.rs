@@ -1,4 +1,4 @@
-use crate::{lexer::Lexer, token::Token, ast::{Program, Statement}};
+use crate::{lexer::Lexer, token::Token, ast::{Program, Statement, LetStatement}};
 
 #[cfg(test)]
 mod tests {
@@ -18,7 +18,7 @@ mod tests {
         let l = lexer::Lexer::new(input.to_string())?;
         let mut p = Parser::new(l)?;
 
-        let program = p.parse_program();
+        let program = p.parse_program()?;
         let statement_count = program.statements.len();
         if statement_count != 3 {
             return Err(format!("Program has wrong statement count! Has {} but \
@@ -100,8 +100,15 @@ impl Parser {
     }
 
     fn parse_let_statement(&mut self) -> Option<Statement> {
+        if !self
+        let s = Statement(LetStatement::new());
         todo!()
     }
+
+    fn expect_peek(&self) -> bool {
+        todo!()
+    }
+
 
     // bookmark @ p41
 }
