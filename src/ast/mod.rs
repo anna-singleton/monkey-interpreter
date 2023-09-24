@@ -21,6 +21,18 @@ impl Program {
 #[derive(Debug)]
 pub enum Statement {
     LetStatement(LetStatement),
+    ReturnStatement(ReturnStatement),
+}
+
+#[derive(Debug)]
+pub struct ReturnStatement {
+    pub expr: Expression,
+}
+
+impl ReturnStatement {
+    pub fn new(expr: Expression) -> Self {
+        return ReturnStatement { expr }
+    }
 }
 
 #[derive(Debug)]

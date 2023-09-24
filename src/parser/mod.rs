@@ -1,4 +1,5 @@
-use crate::{lexer::Lexer, token::Token, ast::{Program, Statement, Identifier, Expression, LetStatement}};
+use crate::{lexer::Lexer, token::Token};
+use crate::ast::{Program, Statement, Identifier, Expression, LetStatement, ReturnStatement};
 use std::mem::discriminant;
 
 #[cfg(test)]
@@ -10,10 +11,10 @@ mod tests {
 
     #[test]
     fn let_statement_test() -> Result<(), String> {
-        let input = "\
-            let x = 5;\
-            let y = 10;\
-            let foobar = 838383;\
+        let input = "
+            let x = 5;
+            let y = 10;
+            let foobar = 838383;
         ";
 
         let l = lexer::Lexer::new(input.to_string())?;
@@ -66,6 +67,33 @@ mod tests {
                                      |acc, elem| format!("{}{}\n", acc, elem));
         return Err(e);
     }
+
+    #[test]
+    fn return_statement_test() -> Result<(), String> {
+        let input = "\
+        return 5;
+        return 10;
+        return 993322;";
+
+        let l = lexer::Lexer::new(input.to_string())?;
+        let mut p = Parser::new(l)?;
+
+        let program = p.parse_program()?;
+        check_parser_errors(&p)?;
+        let statement_count = program.statements.len();
+        if statement_count != 3 {
+            return Err(format!("Program has wrong statement count! Has {} but \
+                               it should be 3!", statement_count));
+        }
+        for s in program.statements.iter() {
+            match s {
+                Statement::ReturnStatement(_) => {},
+                _ => return Err(format!("Expected a RETURN statement, but got {:?}", s)),
+            }
+        }
+        return Ok(());
+    }
+
 }
 
 struct Parser {
@@ -108,8 +136,24 @@ impl Parser {
     fn parse_statement(&mut self) -> Result<Statement, String> {
         match self.curr_token {
             Token::LET => return self.parse_let_statement(),
+            Token::RETURN => return self.parse_return_statement(),
             _ => unimplemented!()
         }
+    }
+
+    fn parse_return_statement(&mut self) -> Result<Statement, String> {
+        // parser currtok is a RETURN token
+        self.next_token()?;
+
+        // skip tokens until we get to a SEMICOLON
+
+        //skip tokens until a semicolon, we are not parsing expressions yet.
+        while !self.curr_token_is(&Token::SEMICOLON) {
+            self.next_token()?;
+        }
+
+        let st = Statement::ReturnStatement(ReturnStatement::new(Expression::new()));
+        return Ok(st);
     }
 
     fn parse_let_statement(&mut self) -> Result<Statement, String> {

@@ -18,7 +18,7 @@ go.
     - [x] 2.2 Why not a parser generator?
     - [x] 2.3 Writing a parser for the monkey programming language
     - [x] 2.4 Parser's first steps: parsing let statements
-    - [ ] 2.5 Parsing return statements
+    - [x] 2.5 Parsing return statements
     - [ ] 2.6 Parsing expressions
         - [ ] Expressions in monkey
         - [ ] Top down operator precedence (Pratt Parsing)
