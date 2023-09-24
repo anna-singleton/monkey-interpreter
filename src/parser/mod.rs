@@ -1,4 +1,5 @@
-use crate::{lexer::Lexer, token::Token, ast::{Program, Statement, LetStatement}};
+use crate::{lexer::Lexer, token::Token, ast::{Program, Statement, Identifier, Expression, LetStatement}};
+use std::mem::discriminant;
 
 #[cfg(test)]
 mod tests {
@@ -11,7 +12,7 @@ mod tests {
     fn let_statement_test() -> Result<(), String> {
         let input = "\
             let x = 5;\
-            let y = 10;\
+            let = 10;\
             let foobar = 838383;\
         ";
 
@@ -19,6 +20,7 @@ mod tests {
         let mut p = Parser::new(l)?;
 
         let program = p.parse_program()?;
+        check_parser_errors(&p)?;
         let statement_count = program.statements.len();
         if statement_count != 3 {
             return Err(format!("Program has wrong statement count! Has {} but \
@@ -55,12 +57,22 @@ mod tests {
 
         return Ok(())
     }
+
+    fn check_parser_errors(p: &Parser) -> Result<(), String> {
+        if p.errors.is_empty() {
+            return Ok(());
+        }
+        let e = p.errors.iter().fold("Parser found the following errors:\n".to_string(),
+                                     |acc, elem| format!("{}{}\n", acc, elem));
+        return Err(e);
+    }
 }
 
 struct Parser {
     l: Lexer,
     curr_token: Token,
-    peek_token: Token
+    peek_token: Token,
+    errors: Vec<String>,
 }
 
 impl Parser {
@@ -70,7 +82,8 @@ impl Parser {
         return Ok(Self {
             l,
             curr_token: tok1,
-            peek_token: tok2})
+            peek_token: tok2,
+            errors: Vec::new()})
     }
 
     fn next_token(&mut self) -> Result<(), String> {
@@ -83,7 +96,7 @@ impl Parser {
         let mut program = Program::new();
         while self.curr_token != Token::EOF {
             let statement = self.parse_statement();
-            if let Some(s) = statement {
+            if let Ok(s) = statement {
                 program.statements.push(s);
             }
             self.next_token()?;
@@ -92,23 +105,61 @@ impl Parser {
         return Ok(program);
     }
 
-    fn parse_statement(&mut self) -> Option<Statement> {
+    fn parse_statement(&mut self) -> Result<Statement, String> {
         match self.curr_token {
             Token::LET => return self.parse_let_statement(),
             _ => unimplemented!()
         }
     }
 
-    fn parse_let_statement(&mut self) -> Option<Statement> {
-        if !self
-        let s = Statement(LetStatement::new());
-        todo!()
+    fn parse_let_statement(&mut self) -> Result<Statement, String> {
+        // parser currtok is a LET token
+
+        if self.expect_peek(&Token::IDENT(String::new())).is_err() {
+            return Err(String::new());
+        }
+
+        // parser currtok is a IDENT token
+
+        let ident = match &self.curr_token {
+            Token::IDENT(name) => Identifier::new(Token::IDENT(name.clone())),
+            _ => unreachable!(),
+        };
+
+        if self.expect_peek(&Token::ASSIGN).is_err() {
+            return Err(String::new());
+        }
+
+        // parser currtok is a ASSIGN token
+
+
+        //skip tokens until a semicolon, we are not parsing expressions yet.
+        while !self.curr_token_is(&Token::SEMICOLON) {
+            self.next_token()?;
+        }
+
+        let st = Statement::LetStatement(LetStatement::new(ident, Expression::new()));
+        return Ok(st);
     }
 
-    fn expect_peek(&self) -> bool {
-        todo!()
+    fn expect_peek(&mut self, expected_tok: &Token) -> Result<(), String> {
+        if self.peek_token_is(expected_tok) {
+            self.next_token()?;
+            return Ok(());
+        } else {
+            let e = format!("Expected an {} token but got {}",
+                                    expected_tok, self.peek_token);
+            self.errors.push(e.clone());
+            return Err(e);
+        }
     }
 
+    fn curr_token_is(&self, expected_tok: &Token) -> bool {
+        return discriminant(&self.curr_token) == discriminant(expected_tok)
+    }
 
+    fn peek_token_is(&self, expected_tok: &Token) -> bool {
+        return discriminant(&self.peek_token) == discriminant(expected_tok)
+    }
     // bookmark @ p41
 }

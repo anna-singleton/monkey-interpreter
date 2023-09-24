@@ -47,7 +47,7 @@ pub struct Identifier {
 
 impl Identifier {
     pub fn new(tok: Token) -> Self {
-        let val = match tok {
+        let val = match &tok {
             Token::IDENT(s) => s.clone(),
             _ => panic!("a token that is not IDENT was passed to create an identifier"),
         };
@@ -59,6 +59,12 @@ impl Identifier {
 }
 
 #[derive(Debug)]
-pub enum Expression {
+pub struct Expression {
 
+}
+
+impl Expression {
+    pub fn new() -> Self {
+        return Expression {};
+    }
 }
